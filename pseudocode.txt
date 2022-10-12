@@ -1,0 +1,79 @@
+
+--------------------------------pseudocode for Deduper--------------------------------
+
+The problem: 
+When we perform RNA-seq library prep we use PCR to amplify our DNA to prepare it for the sequencer. However, PCR methods present
+their own problems. One of them is the creation of PCR duplicates. Having PCR duplicates is problematic since we are then unable
+to know whether certain genes are overexpressed or it is just PCR duplicates. Therefore, we want to remove all PCR duplicates
+present in our sequencing data before downstream analysis to achieve the true results of the experiment.
+
+Input files: Deduper-pranavmuthu/input.SAM
+Output files: Deduper-pranavmuthu/output.SAM
+
+Before running code:
+- remove headers from input file and move them to output file using unix commands
+- sort the input SAM file using unix samtools by the UMI
+
+pseudocode:
+
+Read in the UMI file and create a set of the UMIs, then close UMI file
+UMI_set
+
+Make a new dictionary using the UMIs as the key and an empty dictionary as the value. Then inside the nested dictionary, 
+use 'Start Position', 'Chromosome #', and 'Strand' and the value for this would be a list containing the info for all three. 
+
+Open the input SAM file (sorted)
+    for every line 
+        use the [extract()] function and take out the UMI, Start Position, Chromosome #, CIGAR String, and Strand(from bitwise flag) from this line
+        if UMI not in UMI_set
+            continue and get following line
+        if CIGAR contains soft clipping
+            use the [(fix_start)] function to replace the current start position with the adjusted start position
+        if START, CHR, UMI, and STRAND are in dict using the [check()] function 
+            continue and get following line 
+        else [START, CHR, UMI, and STRAND are not in dict]
+            add a new entry this data and write to the output SAM file
+
+
+~Functions~
+
+def extract(line: str) -> list:
+    
+'''
+This function will take a string and return of list of 5 items from the line, UMI, Start Position, Chromosome Number, Cigar String, and Strand (bitwise flag)
+Input: NS500451:154:HWKTMBGXX:1:11101:24260:1121:CTGTTCAC	0	2	76814284	36	5M	*	0	0	TCCAG	6AEEE	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU
+Expected output: ['CTGTTCAC', '76814284', '2', '5M', '36']
+
+parameter: string line
+return: list of strings info
+
+return list
+'''
+
+def fix_start(cigar: str, start: str) -> int:
+    
+'''
+This function will take a string of the cigar string and a string of the start position and return the updated start position as an int after accounting for soft clipping. 
+
+Input: 3S5M, 13
+Expected output: 10
+
+parameter: string cigar, string start 
+return: int new_start 
+
+return int
+'''
+
+def check(start: str, chrom: str, UMI: str, strand: str) -> bool:
+    
+'''
+This function will take strings of the start position, chromosome, UMI, and strand and returns a bool (True/False) if record is in dict
+
+Input: 'CTGTTCAC', '76814284', '2', '5M', '36'
+Expected output: False 
+
+parameter: string start, string chrom, string UMI, string strand
+return: bool in_dict
+
+return bool 
+'''
