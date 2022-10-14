@@ -2,6 +2,7 @@
 --------------------------------pseudocode for Deduper--------------------------------
 
 The problem: 
+
 When we perform RNA-seq library prep we use PCR to amplify our DNA to prepare it for the sequencer. However, PCR methods present
 their own problems. One of them is the creation of PCR duplicates. Having PCR duplicates is problematic since we are then unable
 to know whether certain genes are overexpressed or it is just PCR duplicates. Therefore, we want to remove all PCR duplicates
