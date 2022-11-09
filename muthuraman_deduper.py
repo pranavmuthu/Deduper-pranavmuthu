@@ -11,6 +11,7 @@ def get_args():
     parse.add_argument("-f", "--file", help="absolute file path of sorted SAM file", required=True, type=str)
     parse.add_argument("-p", "--paired", help="designate if file is paired end reads, pass -p if paired", required=False, action='store_true')
     parse.add_argument("-u", "--umi", help="absolute file path of list of UMI file", required=True, type=str)
+    parse.add_argument("-h", "--help", help="run this tool using -f for input file and -u for UMI list", required=False, type=str)
     return parse.parse_args()
 
 args = get_args()
